@@ -1,9 +1,25 @@
 #include <QApplication>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QMessageBox>
+
 #include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    // Localization stuff
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+        QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    if (!app.installTranslator(&qtTranslator))
+        QMessageBox::warning(0, "Warning", "Unable to load Qt translation for the " + QLocale::system().name() + " locale");
+
+    QTranslator myappTranslator;
+    if (!myappTranslator.load("example_" + QLocale::system().name()))
+        QMessageBox::warning(0, "Warning", "Unable to load application translation for the " + QLocale::system().name() + " locale");
+    app.installTranslator(&myappTranslator);
 
     // Retina display support for Mac OS, iOS and X11:
     // http://blog.qt.digia.com/blog/2013/04/25/retina-display-support-for-mac-os-ios-and-x11/
